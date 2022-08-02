@@ -1,3 +1,4 @@
+from audioop import mul
 import copy
 from enum import Enum
 
@@ -22,6 +23,30 @@ class Turn(Enum):
         return Turn.PLAYER_1
 
 
+def numberInBaseN(digits, baseN):
+    '''Returns a number given its digits in base N.'''
+    result = 0
+    multiplier = 1
+    for digit in digits:
+        result += multiplier * digit
+        multiplier *= baseN
+
+    return result
+
+
+def sink(a, idx):
+    '''Given an array `a` initially sorted, and knowing that an element at `idx` has just been changed,
+    sinks/bubbles the element such that the array remains sorted.
+    '''
+    while idx < len(a) - 1 and a[idx] < a[idx + 1]:
+        a[idx], a[idx + 1] = a[idx + 1], a[idx]
+        idx += 1
+
+    while idx > 0 and a[idx] > a[idx - 1]:
+        a[idx], a[idx - 1] = a[idx - 1], a[idx]
+        idx -= 1
+
+
 class Player:
     def __init__(self, numHands: int, numFingers: int):
         self.hands = [1] * numHands
@@ -31,7 +56,7 @@ class Player:
         return self.hands == other.hands
 
     def __hash__(self):
-        return hash(tuple(self.hands))
+        return numberInBaseN(self.hands, self.numFingers)
 
     def __str__(self):
         return ','.join(str(hand) for hand in self.hands)
@@ -42,13 +67,10 @@ class Player:
 
         self.hands[whichHand] = (
             self.hands[whichHand] + fingersToAdd) % self.numFingers
-        self.hands = sorted(self.hands)
 
-        idx = 0
-        while idx < len(self.hands) and self.hands[idx] == 0:
-            idx += 1
-
-        self.hands = self.hands[idx:]
+        sink(self.hands, whichHand)
+        if self.hands[-1] == 0:
+            self.hands = self.hands[:-1]
 
     def getHands(self):
         return self.hands
@@ -75,7 +97,7 @@ class GameState:
         return self.turn == other.turn and self.player1 == other.player1 and self.player2 == other.player2
 
     def __hash__(self):
-        return hash(self.player1) + hash(self.player2) + hash(self.turn)
+        return hash(self.player1) + hash(self.player2) + self.turn.value
 
     def nextStates(self):
         result = set()
