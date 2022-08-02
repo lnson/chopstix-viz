@@ -1,4 +1,5 @@
 import copy
+from collections import deque
 from enum import Enum
 
 from absl import app, flags
@@ -153,10 +154,11 @@ def graphStates(numHands: int, numFingers: int):
     # Nodes that were encountered while BFS-ing, not necessarily visited.
     encountered = set(visited)
     # Nodes to be visited.
-    toBeVisited = [state]
+    toBeVisited = deque()
+    toBeVisited.append(state)
 
     while len(toBeVisited) != 0:
-        state = toBeVisited.pop()
+        state = toBeVisited.popleft()
         visited.add(state)
         addStateToGraph(state, graph)
 
