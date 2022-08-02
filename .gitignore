@@ -127,3 +127,12 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Bazel artifacts.
+/bazel.iml
+/bazel-*
+/output/
+/production
+/.sass-cache
+.bazelversion
+user.bazelrc
