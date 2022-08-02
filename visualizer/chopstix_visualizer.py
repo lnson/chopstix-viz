@@ -34,7 +34,7 @@ def numberInBaseN(digits, baseN):
     return result
 
 
-def sink(a, idx):
+def sortAlmostSortedArray(a, idx):
     '''Given an array `a` initially sorted, and knowing that an element at `idx` has just been changed,
     sinks/bubbles the element such that the array remains sorted.
     '''
@@ -49,6 +49,7 @@ def sink(a, idx):
 
 class Player:
     def __init__(self, numHands: int, numFingers: int):
+        # hands must be kept sorted descendingly and must not contain 0.
         self.hands = [1] * numHands
         self.numFingers = numFingers
 
@@ -68,7 +69,9 @@ class Player:
         self.hands[whichHand] = (
             self.hands[whichHand] + fingersToAdd) % self.numFingers
 
-        sink(self.hands, whichHand)
+        # hands must be kept sorted descendingly.
+        sortAlmostSortedArray(self.hands, whichHand)
+        # hands must not contain 0.
         if self.hands[-1] == 0:
             self.hands = self.hands[:-1]
 
